@@ -1,0 +1,24 @@
+.Menswear{
+    box-shadow: 0 2px 3px #ccc;
+    text-align: center;
+}
+
+.Menswear{
+    width: 480px;
+}
+
+.Menswear img{
+    width: 200px;
+    height: 250px;
+}
+
+@media (max-width: 960px){
+    .Menswear{
+        width: 150px;
+    }
+
+    .Menswear img{
+        width: 50px;
+        height: 70px;
+    }
+}
