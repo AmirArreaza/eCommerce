@@ -1,20 +1,17 @@
 import React, { Component } from "react";
 import MenswearList from "./MenswearList/MenswearList";
-import { Container, Row} from "react-grid-system";
-import Select from 'react-select';
+import { Container, Row } from "react-grid-system";
 import axios from "axios";
 
 class MenswearComponent extends Component {
   state = {
     products: [],
+    filtered: [],
     brands: [],
-    filter: "",
   };
 
   componentDidMount() {
-    console.log("Fetching values");
     this.fetchValues();
-    console.log("Values fetched");
   }
 
   async fetchValues() {
@@ -25,26 +22,44 @@ class MenswearComponent extends Component {
       return response.data;
     });
     this.setState({ products: values.listing.products });
+    this.setState({ filtered: values.listing.products });
 
-    console.log('Test');
+    var brands = [];
+    brands.push({ value: "", label: "" });
+    var control = {};
+    this.state.products.map((product) => {
+      if (control[product.brand.id] === undefined) {
+        var brand = { value: product.brand.id, label: product.brand.name };
+        brands.push(brand);
+        control[product.brand.id] = product.brand.name;
+      }
+      return true;
+    });
 
-    var brands = new Set();
+    this.setState({ brands: brands });
+  }
 
-    this.state.products.map((product) => brands.add(product.brand.name));
-    this.setState({ brands: brands});
-    console.log(this.state.brands);
-
+  filterPerBrand = (event) => {
+    if(event.target.value !== ''){
+      const result = this.state.products.filter(product => event.target.value === product.brand.name);
+      this.setState({ filtered: result });
+    }else{
+      this.setState({ filtered: this.state.products });
+    }
   }
 
   render() {
-
+    let optionItems = this.state.brands.map((brand) =>
+      <option key={brand.value}>{brand.label}</option>
+    );
     return (
-      <div className="MenswearComponent">
-        <Select value={this.state.selected} 
-                options={this.state.brands.name} />
+      <div className="MenswearComponent" >
+        <select onChange={this.filterPerBrand}>
+          {optionItems}
+        </select>
         <Container>
           <Row>
-            <MenswearList products={this.state.products} />
+            <MenswearList products={this.state.filtered} />
           </Row>
         </Container>
       </div>
